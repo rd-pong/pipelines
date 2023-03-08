@@ -94,8 +94,8 @@ class SageMakerMonitoringScheduleComponent(SageMakerComponent):
           f"Created MonitoringSchedule with name: %s",
           request["spec"]["monitoringScheduleName"],
       )        
-      logging.info(request["spec"]["monitoringScheduleConfig"])
-      # endpoint_name = request["spec"]["monitoringScheduleConfig"]["monitoringJobDefinition"]["monitoringInputs"]# ["endpointInput"]["endpointName"],
+      
+      # endpoint_name = request["monitoringScheduleConfig"]["monitoringJobDefinition"]["monitoringInputs"]["endpointInput"]["endpointName"],
       # logging.info(
       #     "Model dashboard: https://{}.console.aws.amazon.com/sagemaker/home?region={}#/model-dashboard/{}".format(
       #         inputs.region, inputs.region, endpoint_name,
@@ -108,9 +108,9 @@ class SageMakerMonitoringScheduleComponent(SageMakerComponent):
         ack_resource = super()._get_resource()
         sm_job_status = ack_resource["status"]["monitoringScheduleStatus"]
     
-        if sm_job_status == "SCHEDULED":
+        if sm_job_status == "Scheduled":
             return SageMakerJobStatus(
-                is_completed=True, has_error=False, raw_status="SCHEDULED"
+                is_completed=True, has_error=False, raw_status="Scheduled"
             )
         
         if sm_job_status == "Failed":
