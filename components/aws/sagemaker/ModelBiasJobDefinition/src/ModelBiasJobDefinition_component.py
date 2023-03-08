@@ -14,10 +14,10 @@ import logging
 from typing import Dict
 import json
 
-from DataQualityJobDefinition.src.DataQualityJobDefinition_spec import (
-    SageMakerDataQualityJobDefinitionInputs,
-    SageMakerDataQualityJobDefinitionOutputs,
-    SageMakerDataQualityJobDefinitionSpec,
+from ModelBiasJobDefinition.src.ModelBiasJobDefinition_spec import (
+    SageMakerModelBiasJobDefinitionInputs,
+    SageMakerModelBiasJobDefinitionOutputs,
+    SageMakerModelBiasJobDefinitionSpec,
 )
 from commonv2.sagemaker_component import (
     SageMakerComponent,
@@ -28,38 +28,38 @@ from commonv2 import snake_to_camel
 
 
 @ComponentMetadata(
-    name="SageMaker - DataQualityJobDefinition",
+    name="SageMaker - ModelBiasJobDefinition",
     description="",
-    spec=SageMakerDataQualityJobDefinitionSpec,
+    spec=SageMakerModelBiasJobDefinitionSpec,
 )
-class SageMakerDataQualityJobDefinitionComponent(SageMakerComponent):
+class SageMakerModelBiasJobDefinitionComponent(SageMakerComponent):
 
-    """SageMaker component for DataQualityJobDefinition."""
+    """SageMaker component for ModelBiasJobDefinition."""
 
-    def Do(self, spec: SageMakerDataQualityJobDefinitionSpec):
+    def Do(self, spec: SageMakerModelBiasJobDefinitionSpec):
 
         self.namespace = self._get_current_namespace()
         logging.info("Current namespace: " + self.namespace)
 
         ############GENERATED SECTION BELOW############
 
-        self.job_name = spec.inputs.job_definition_name = (
+        self.job_name = spec.inputs.model_bias_job_definition_name = (
             spec.inputs.job_definition_name  # todo: need customize
             if spec.inputs.job_definition_name  # todo: need customize
             else SageMakerComponent._generate_unique_timestamped_id(
-                prefix="data-quality-job-definition"
+                prefix="model-bias-job-definition"
             )
         )
 
         self.group = "sagemaker.services.k8s.aws"
         self.version = "v1alpha1"
-        self.plural = "dataqualityjobdefinitions"
+        self.plural = "modelbiasjobdefinitions"
 
         self.job_request_outline_location = (
-            "DataQualityJobDefinition/src/DataQualityJobDefinition_request.yaml.tpl"
+            "ModelBiasJobDefinition/src/ModelBiasJobDefinition_request.yaml.tpl"
         )
         self.job_request_location = (
-            "DataQualityJobDefinition/src/DataQualityJobDefinition_request.yaml"
+            "ModelBiasJobDefinition/src/ModelBiasJobDefinition_request.yaml"
         )
         ############GENERATED SECTION ABOVE############
 
@@ -67,8 +67,8 @@ class SageMakerDataQualityJobDefinitionComponent(SageMakerComponent):
 
     def _create_job_request(
         self,
-        inputs: SageMakerDataQualityJobDefinitionInputs,
-        outputs: SageMakerDataQualityJobDefinitionOutputs,
+        inputs: SageMakerModelBiasJobDefinitionInputs,
+        outputs: SageMakerModelBiasJobDefinitionOutputs,
     ) -> Dict:
 
         return super()._create_job_yaml(inputs, outputs)
@@ -88,8 +88,8 @@ class SageMakerDataQualityJobDefinitionComponent(SageMakerComponent):
         self,
         job: object,
         request: Dict,
-        inputs: SageMakerDataQualityJobDefinitionInputs,
-        outputs: SageMakerDataQualityJobDefinitionOutputs,
+        inputs: SageMakerModelBiasJobDefinitionInputs,
+        outputs: SageMakerModelBiasJobDefinitionOutputs,
     ):
         pass
 
@@ -113,8 +113,8 @@ class SageMakerDataQualityJobDefinitionComponent(SageMakerComponent):
         self,
         job: object,
         request: Dict,
-        inputs: SageMakerDataQualityJobDefinitionInputs,
-        outputs: SageMakerDataQualityJobDefinitionOutputs,
+        inputs: SageMakerModelBiasJobDefinitionInputs,
+        outputs: SageMakerModelBiasJobDefinitionOutputs,
     ):
         # prepare component outputs (defined in the spec)
 
@@ -136,7 +136,7 @@ class SageMakerDataQualityJobDefinitionComponent(SageMakerComponent):
 if __name__ == "__main__":
     import sys
 
-    spec = SageMakerDataQualityJobDefinitionSpec(sys.argv[1:])
+    spec = SageMakerModelBiasJobDefinitionSpec(sys.argv[1:])
 
-    component = SageMakerDataQualityJobDefinitionComponent()
+    component = SageMakerModelBiasJobDefinitionComponent()
     component.Do(spec)

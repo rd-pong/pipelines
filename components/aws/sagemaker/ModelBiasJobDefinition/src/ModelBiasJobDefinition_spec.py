@@ -10,7 +10,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""Specification for the SageMaker - DataQualityJobDefinition"""
+"""Specification for the SageMaker - ModelBiasJobDefinition"""
 
 from dataclasses import dataclass
 
@@ -31,15 +31,15 @@ from commonv2.common_inputs import (
 
 
 @dataclass(frozen=False)
-class SageMakerDataQualityJobDefinitionInputs(SageMakerComponentCommonInputs):
-    """Defines the set of inputs for the DataQualityJobDefinition component."""
+class SageMakerModelBiasJobDefinitionInputs(SageMakerComponentCommonInputs):
+    """Defines the set of inputs for the ModelBiasJobDefinition component."""
 
-    data_quality_app_specification: Input
-    data_quality_baseline_config: Input
-    data_quality_job_input: Input
-    data_quality_job_output_config: Input
     job_definition_name: Input
     job_resources: Input
+    model_bias_app_specification: Input
+    model_bias_baseline_config: Input
+    model_bias_job_input: Input
+    model_bias_job_output_config: Input
     network_config: Input
     role_arn: Input
     stopping_condition: Input
@@ -47,43 +47,22 @@ class SageMakerDataQualityJobDefinitionInputs(SageMakerComponentCommonInputs):
 
 
 @dataclass
-class SageMakerDataQualityJobDefinitionOutputs(SageMakerComponentBaseOutputs):
-    """Defines the set of outputs for the DataQualityJobDefinition component."""
+class SageMakerModelBiasJobDefinitionOutputs(SageMakerComponentBaseOutputs):
+    """Defines the set of outputs for the ModelBiasJobDefinition component."""
 
     ack_resource_metadata: Output
     conditions: Output
 
 
-class SageMakerDataQualityJobDefinitionSpec(
+class SageMakerModelBiasJobDefinitionSpec(
     SageMakerComponentSpec[
-        SageMakerDataQualityJobDefinitionInputs,
-        SageMakerDataQualityJobDefinitionOutputs,
+        SageMakerModelBiasJobDefinitionInputs, SageMakerModelBiasJobDefinitionOutputs
     ]
 ):
-    INPUTS: SageMakerDataQualityJobDefinitionInputs = SageMakerDataQualityJobDefinitionInputs(
-        data_quality_app_specification=InputValidator(
-            input_type=SpecInputParsers.yaml_or_json_dict,
-            description="Specifies the container that runs the monitoring job.",
-            required=True,
-        ),
-        data_quality_baseline_config=InputValidator(
-            input_type=SpecInputParsers.yaml_or_json_dict,
-            description="Configures the constraints and baselines for the monitoring job.",
-            required=False,
-        ),
-        data_quality_job_input=InputValidator(
-            input_type=SpecInputParsers.yaml_or_json_dict,
-            description="A list of inputs for the monitoring job. Currently endpoints are supported as monitoring inputs.",
-            required=True,
-        ),
-        data_quality_job_output_config=InputValidator(
-            input_type=SpecInputParsers.yaml_or_json_dict,
-            description="The output configuration for monitoring jobs.",
-            required=True,
-        ),
+    INPUTS: SageMakerModelBiasJobDefinitionInputs = SageMakerModelBiasJobDefinitionInputs(
         job_definition_name=InputValidator(
             input_type=str,
-            description="The name for the monitoring job definition.",
+            description="The name of the bias job definition. The name must be unique within an Amazon Web Services Region in",
             required=True,
         ),
         job_resources=InputValidator(
@@ -91,9 +70,29 @@ class SageMakerDataQualityJobDefinitionSpec(
             description="Identifies the resources to deploy for a monitoring job.",
             required=True,
         ),
+        model_bias_app_specification=InputValidator(
+            input_type=SpecInputParsers.yaml_or_json_dict,
+            description="Configures the model bias job to run a specified Docker container image.",
+            required=True,
+        ),
+        model_bias_baseline_config=InputValidator(
+            input_type=SpecInputParsers.yaml_or_json_dict,
+            description="The baseline configuration for a model bias job.",
+            required=False,
+        ),
+        model_bias_job_input=InputValidator(
+            input_type=SpecInputParsers.yaml_or_json_dict,
+            description="Inputs for the model bias job.",
+            required=True,
+        ),
+        model_bias_job_output_config=InputValidator(
+            input_type=SpecInputParsers.yaml_or_json_dict,
+            description="The output configuration for monitoring jobs.",
+            required=True,
+        ),
         network_config=InputValidator(
             input_type=SpecInputParsers.yaml_or_json_dict,
-            description="Specifies networking configuration for the monitoring job.",
+            description="Networking options for a model bias job.",
             required=False,
         ),
         role_arn=InputValidator(
@@ -114,7 +113,7 @@ class SageMakerDataQualityJobDefinitionSpec(
         **vars(COMMON_INPUTS),
     )
 
-    OUTPUTS = SageMakerDataQualityJobDefinitionOutputs(
+    OUTPUTS = SageMakerModelBiasJobDefinitionOutputs(
         ack_resource_metadata=OutputValidator(
             description="All CRs managed by ACK have a common `Status.ACKResourceMetadata` member that is used to contain res",
         ),
@@ -126,18 +125,18 @@ class SageMakerDataQualityJobDefinitionSpec(
     def __init__(self, arguments: List[str]):
         super().__init__(
             arguments,
-            SageMakerDataQualityJobDefinitionInputs,
-            SageMakerDataQualityJobDefinitionOutputs,
+            SageMakerModelBiasJobDefinitionInputs,
+            SageMakerModelBiasJobDefinitionOutputs,
         )
 
     @property
-    def inputs(self) -> SageMakerDataQualityJobDefinitionInputs:
+    def inputs(self) -> SageMakerModelBiasJobDefinitionInputs:
         return self._inputs
 
     @property
-    def outputs(self) -> SageMakerDataQualityJobDefinitionOutputs:
+    def outputs(self) -> SageMakerModelBiasJobDefinitionOutputs:
         return self._outputs
 
     @property
-    def output_paths(self) -> SageMakerDataQualityJobDefinitionOutputs:
+    def output_paths(self) -> SageMakerModelBiasJobDefinitionOutputs:
         return self._output_paths

@@ -27,7 +27,6 @@ from commonv2.sagemaker_component import (
 from commonv2 import snake_to_camel
 
 
-
 @ComponentMetadata(
     name="SageMaker - MonitoringSchedule",
     description="",
@@ -51,7 +50,7 @@ class SageMakerMonitoringScheduleComponent(SageMakerComponent):
                 prefix="monitoring-schedule"
             )
         )
-        
+
         self.group = "sagemaker.services.k8s.aws"
         self.version = "v1alpha1"
         self.plural = "monitoringschedules"
@@ -65,20 +64,22 @@ class SageMakerMonitoringScheduleComponent(SageMakerComponent):
         ############GENERATED SECTION ABOVE############
 
         super().Do(spec.inputs, spec.outputs, spec.output_paths)
-        
-    
 
     def _create_job_request(
         self,
         inputs: SageMakerMonitoringScheduleInputs,
         outputs: SageMakerMonitoringScheduleOutputs,
     ) -> Dict:
-        
+
         return super()._create_job_yaml(inputs, outputs)
 
     def _submit_job_request(self, request: Dict) -> object:
-        
-        return super()._create_resource(request, 6, 10)
+
+        if self.resource_upgrade:
+            self.initial_resouce_condition_times = self._get_condition_times()
+            return super()._patch_custom_resource(request)
+        else:
+            return super()._create_resource(request, 6, 10)
 
     def _on_job_terminated(self):
         super()._delete_custom_resource()
@@ -90,29 +91,28 @@ class SageMakerMonitoringScheduleComponent(SageMakerComponent):
         inputs: SageMakerMonitoringScheduleInputs,
         outputs: SageMakerMonitoringScheduleOutputs,
     ):
-      logging.info(
-          f"Created MonitoringSchedule with name: %s",
-          request["spec"]["monitoringScheduleName"],
-      )        
-      
-      # endpoint_name = request["monitoringScheduleConfig"]["monitoringJobDefinition"]["monitoringInputs"]["endpointInput"]["endpointName"],
-      # logging.info(
-      #     "Model dashboard: https://{}.console.aws.amazon.com/sagemaker/home?region={}#/model-dashboard/{}".format(
-      #         inputs.region, inputs.region, endpoint_name,
-      #     )
-      # )
-      
-    
+        logging.info(
+            f"Created MonitoringSchedule with name: %s",
+            request["spec"]["monitoringScheduleName"],
+        )
+
+        # endpoint_name = request["monitoringScheduleConfig"]["monitoringJobDefinition"]["monitoringInputs"]["endpointInput"]["endpointName"],
+        # logging.info(
+        #     "Model dashboard: https://{}.console.aws.amazon.com/sagemaker/home?region={}#/model-dashboard/{}".format(
+        #         inputs.region, inputs.region, endpoint_name,
+        #     )
+        # )
+
     def _get_job_status(self):
-      
+
         ack_resource = super()._get_resource()
         sm_job_status = ack_resource["status"]["monitoringScheduleStatus"]
-    
+
         if sm_job_status == "Scheduled":
             return SageMakerJobStatus(
                 is_completed=True, has_error=False, raw_status="Scheduled"
             )
-        
+
         if sm_job_status == "Failed":
             message = ack_resource["status"]["failureReason"]
             return SageMakerJobStatus(
@@ -121,7 +121,7 @@ class SageMakerMonitoringScheduleComponent(SageMakerComponent):
                 error_message=message,
                 raw_status=sm_job_status,
             )
-        
+
         if sm_job_status == "Stopped":
             message = "The schedule was stopped."
             return SageMakerJobStatus(
@@ -131,7 +131,19 @@ class SageMakerMonitoringScheduleComponent(SageMakerComponent):
                 raw_status=sm_job_status,
             )
         return SageMakerJobStatus(is_completed=False, raw_status=sm_job_status)
-      
+
+    def _get_upgrade_status(self):
+
+        job_status = self._get_job_status()
+        # Needed because Requeue errors are not counted in _check_resource_conditions.
+        recoverable_conditions = self._get_conditions_of_type("ACK.Recoverable")
+        if len(recoverable_conditions) == 0:
+            return job_status
+        else:
+            sm_job_status = job_status.raw_status
+        return SageMakerJobStatus(
+            is_completed=False, has_error=False, raw_status=sm_job_status
+        )
 
     def _after_job_complete(
         self,
@@ -142,30 +154,23 @@ class SageMakerMonitoringScheduleComponent(SageMakerComponent):
     ):
         # prepare component outputs (defined in the spec)
 
-        
         ack_statuses = super()._get_resource()["status"]
 
         ############GENERATED SECTION BELOW############
-        
+
         outputs.ack_resource_metadata = str(
             ack_statuses["ackResourceMetadata"]
             if "ackResourceMetadata" in ack_statuses
             else None
         )
         outputs.conditions = str(
-            ack_statuses["conditions"]
-            if "conditions" in ack_statuses
-            else None
+            ack_statuses["conditions"] if "conditions" in ack_statuses else None
         )
         outputs.creation_time = str(
-            ack_statuses["creationTime"]
-            if "creationTime" in ack_statuses
-            else None
+            ack_statuses["creationTime"] if "creationTime" in ack_statuses else None
         )
         outputs.failure_reason = str(
-            ack_statuses["failureReason"]
-            if "failureReason" in ack_statuses
-            else None
+            ack_statuses["failureReason"] if "failureReason" in ack_statuses else None
         )
         outputs.last_modified_time = str(
             ack_statuses["lastModifiedTime"]
