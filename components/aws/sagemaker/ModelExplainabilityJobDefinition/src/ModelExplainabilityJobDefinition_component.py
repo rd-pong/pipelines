@@ -47,7 +47,7 @@ class SageMakerModelExplainabilityJobDefinitionComponent(SageMakerComponent):
             spec.inputs.job_definition_name  # todo: need customize
             if spec.inputs.job_definition_name  # todo: need customize
             else SageMakerComponent._generate_unique_timestamped_id(
-                prefix=""model-explainability-job-definition"
+                prefix="model-explainability-job-definition"
             )
         )
 
