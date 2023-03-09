@@ -1,5 +1,5 @@
-name: "Sagemaker - ModelExplainabilityJobDefinition"
-description: Create ModelExplainabilityJobDefinition
+name: "Sagemaker - ModelQualityJobDefinition"
+description: Create ModelQualityJobDefinition
 inputs:
   - {
       name: region,
@@ -12,7 +12,7 @@ inputs:
       name: job_definition_name,
       type: String,
       default: '',
-      description: "The name of the model explainability job definition.",
+      description: "The name of the monitoring job definition.",
     }
   - {
       name: job_resources,
@@ -21,25 +21,25 @@ inputs:
       description: "Identifies the resources to deploy for a monitoring job.",
     }
   - {
-      name: model_explainability_app_specification,
+      name: model_quality_app_specification,
       type: JsonObject,
       default: '{}',
-      description: "Configures the model explainability job to run a specified Docker container image.",
+      description: "The container that runs the monitoring job.",
     }
   - {
-      name: model_explainability_baseline_config,
+      name: model_quality_baseline_config,
       type: JsonObject,
       default: '{}',
-      description: "The baseline configuration for a model explainability job.",
+      description: "Specifies the constraints and baselines for the monitoring job.",
     }
   - {
-      name: model_explainability_job_input,
+      name: model_quality_job_input,
       type: JsonObject,
       default: '{}',
-      description: "Inputs for the model explainability job.",
+      description: "A list of the inputs that are monitored.",
     }
   - {
-      name: model_explainability_job_output_config,
+      name: model_quality_job_output_config,
       type: JsonObject,
       default: '{}',
       description: "The output configuration for monitoring jobs.",
@@ -48,7 +48,7 @@ inputs:
       name: network_config,
       type: JsonObject,
       default: '{}',
-      description: "Networking options for a model explainability job.",
+      description: "Specifies the network configuration for the monitoring job.",
     }
   - {
       name: role_arn,
@@ -90,7 +90,7 @@ implementation:
     image: rdpen/test-modelmoni:22
     command: [python3]
     args:
-      - ModelExplainabilityJobDefinition/src/ModelExplainabilityJobDefinition_component.py
+      - ModelQualityJobDefinition/src/ModelQualityJobDefinition_component.py
       - --region
       - { inputValue: region }
       ###########################GENERATED SECTION BELOW############################
@@ -98,14 +98,14 @@ implementation:
       - { inputValue: job_definition_name }
       - --job_resources
       - { inputValue: job_resources }
-      - --model_explainability_app_specification
-      - { inputValue: model_explainability_app_specification }
-      - --model_explainability_baseline_config
-      - { inputValue: model_explainability_baseline_config }
-      - --model_explainability_job_input
-      - { inputValue: model_explainability_job_input }
-      - --model_explainability_job_output_config
-      - { inputValue: model_explainability_job_output_config }
+      - --model_quality_app_specification
+      - { inputValue: model_quality_app_specification }
+      - --model_quality_baseline_config
+      - { inputValue: model_quality_baseline_config }
+      - --model_quality_job_input
+      - { inputValue: model_quality_job_input }
+      - --model_quality_job_output_config
+      - { inputValue: model_quality_job_output_config }
       - --network_config
       - { inputValue: network_config }
       - --role_arn
