@@ -87,7 +87,7 @@ outputs:
 
 implementation:
   container:
-    image: rdpen/test-modelmoni:22
+    image: rdpen/test-modelmoni:24
     command: [python3]
     args:
       - ModelQualityJobDefinition/src/ModelQualityJobDefinition_component.py

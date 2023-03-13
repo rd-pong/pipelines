@@ -91,17 +91,7 @@ class SageMakerMonitoringScheduleComponent(SageMakerComponent):
         inputs: SageMakerMonitoringScheduleInputs,
         outputs: SageMakerMonitoringScheduleOutputs,
     ):
-        logging.info(
-            f"Created MonitoringSchedule with name: %s",
-            request["spec"]["monitoringScheduleName"],
-        )
-
-        # endpoint_name = request["monitoringScheduleConfig"]["monitoringJobDefinition"]["monitoringInputs"]["endpointInput"]["endpointName"],
-        # logging.info(
-        #     "Model dashboard: https://{}.console.aws.amazon.com/sagemaker/home?region={}#/model-dashboard/{}".format(
-        #         inputs.region, inputs.region, endpoint_name,
-        #     )
-        # )
+        pass
 
     def _get_job_status(self):
 
