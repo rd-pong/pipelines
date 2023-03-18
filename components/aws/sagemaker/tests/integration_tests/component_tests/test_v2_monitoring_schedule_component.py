@@ -4,25 +4,21 @@ import os
 import utils
 from utils import kfp_client_utils
 from utils import ack_utils
-from utils import sagemaker_utils
-import json
-from sagemaker import get_execution_role, image_uris, Session
-from sagemaker.model import Model
-from sagemaker.model_monitor import DataCaptureConfig
 
 
 @pytest.mark.parametrize(
     "test_file_dir",
     [
         pytest.param(
-            "resources/config/ack-model-bias-job-definition",
+            "resources/config/ack-model-explainability-job-definition",
             marks=pytest.mark.canary_test,
+        ),
+        pytest.param(
+            "resources/config/ack-data-quality-job-definition",
         ),
     ],
 )
-def test_v2_model_bias_job_definition(
-    kfp_client, experiment_id, test_file_dir, deploy_endpoint
-):
+def test_job_definitions(kfp_client, experiment_id, test_file_dir, deploy_endpoint):
     download_dir = utils.mkdir(os.path.join(test_file_dir + "/generated"))
     test_params = utils.load_params(
         utils.replace_placeholders(
@@ -32,10 +28,11 @@ def test_v2_model_bias_job_definition(
     )
     k8s_client = ack_utils.k8s_client()
     job_definition_name = (
-        utils.generate_random_string(10) + "-v2-model-bias-job-definition"
+        utils.generate_random_string(10) + "-v2-" + test_params["TestName"]
     )
+    job_input_name = test_params["JobInputName"]
     test_params["Arguments"]["job_definition_name"] = job_definition_name
-    test_params["Arguments"]["model_bias_job_input"]["endpointInput"][
+    test_params["Arguments"][job_input_name]["endpointInput"][
         "endpointName"
     ] = deploy_endpoint
 
@@ -53,22 +50,28 @@ def test_v2_model_bias_job_definition(
         )
 
         job_definition_describe = ack_utils._get_resource(
-            k8s_client, job_definition_name, "modelbiasjobdefinitions"
+            k8s_client, job_definition_name, test_params["Plural"]
         )
+
+        print("Describe job definition " + job_definition_name)
+        print(job_definition_describe)
 
         assert (
             job_definition_describe["status"]["conditions"][0]["type"]
             == "ACK.ResourceSynced"
         )
-
-        assert job_definition_describe["status"]["ackResourceMetadata"]["arn"] != None
+        assert (
+            job_definition_name
+            in job_definition_describe["status"]["ackResourceMetadata"]["arn"]
+        )
 
     finally:
         ack_utils._delete_resource(
-            k8s_client, job_definition_name, "modelbiasjobdefinitions"
+            k8s_client, job_definition_name, test_params["Plural"]
         )
 
 
+# Testing monitoring schedule with model bias job definition
 @pytest.mark.parametrize(
     "test_file_dir",
     [

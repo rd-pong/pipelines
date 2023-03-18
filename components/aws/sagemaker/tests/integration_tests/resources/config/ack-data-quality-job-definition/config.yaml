@@ -1,30 +1,31 @@
-PipelineDefinition: resources/definition/model_bias_job_defi_v2_pipeline.py
-TestName: ack-model-bias-job-definition
+PipelineDefinition: resources/definition/data_quality_job_defi_v2_pipeline.py
+TestName: ack-data-quality-job-definition
 Timeout: 1000
+Plural: dataqualityjobdefinitions
+JobInputName: data_quality_job_input
 ModelImage: ((XGBOOST_REGISTRY)).dkr.ecr.((REGION)).amazonaws.com/sagemaker-xgboost:0.90-1-cpu-py3
 ModelUrl: s3://((DATA_BUCKET))/model-monitor/xgboost-churn-model.tar.gz
 EndpointCapture: s3://((DATA_BUCKET))/model-monitor/endpoint_capture
 Arguments:
   region: ((REGION))
-  model_bias_app_specification:
+  data_quality_app_specification:
     imageURI: ((MODEL_MONITOR_IMAGE)).dkr.ecr.((REGION)).amazonaws.com/sagemaker-model-monitor-analyzer
-    configURI: s3://((DATA_BUCKET))/model-monitor/baselining/model_bias/analysis_config.json
-  model_bias_job_input:
+  data_quality_baseline_config:
+    constraintsResource:
+      s3URI: s3://((DATA_BUCKET))/model-monitor/baselining/data_quality/constraints.json
+    statisticsResource:
+      s3URI: s3://((DATA_BUCKET))/model-monitor/baselining/data_quality/statistics.json
+  data_quality_job_input:
     endpointInput:
       localPath: "/opt/ml/processing/input/endpoint"
       s3InputMode: File
       s3DataDistributionType: FullyReplicated
-      probabilityThresholdAttribute: 0.8
-      startTimeOffset: "-PT1H"
-      endTimeOffset: "-PT0H"
-    groundTruthS3Input:
-      s3URI: s3://((DATA_BUCKET))/model-monitor/ground_truth_data
-  model_bias_job_output_config:
+  data_quality_job_output_config:
     monitoringOutputs:
     - s3Output:
         localPath: /opt/ml/processing/output
-        s3URI: s3://((DATA_BUCKET))/model-monitor/reports/model-bias-job-definition/
-        s3UploadMode: Continuous
+        s3URI: s3://((DATA_BUCKET))/model-monitor/reports/data-quality-job-definition/
+      s3UploadMode: Continuous
   job_resources:
     clusterConfig:
       instanceCount: 1
