@@ -44,8 +44,8 @@ class SageMakerMonitoringScheduleComponent(SageMakerComponent):
         ############GENERATED SECTION BELOW############
 
         self.job_name = spec.inputs.monitoring_schedule_name = (
-            spec.inputs.monitoring_schedule_name  # todo: need customize
-            if spec.inputs.monitoring_schedule_name  # todo: need customize
+            spec.inputs.monitoring_schedule_name
+            if spec.inputs.monitoring_schedule_name
             else SageMakerComponent._generate_unique_timestamped_id(
                 prefix="monitoring-schedule"
             )

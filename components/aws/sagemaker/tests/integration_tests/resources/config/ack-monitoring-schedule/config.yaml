@@ -34,7 +34,7 @@ Arguments:
   stopping_condition:
     maxRuntimeInSeconds: 3600
   monitoring_schedule_config:
-    monitoringType: ModelBias # TODO: change this to your own type
+    monitoringType: ModelBias
     scheduleConfig:
-      scheduleExpression: "cron(0 12 ? * * *)" # TODO: change this to your own schedule
+      scheduleExpression: "cron(0 12 ? * * *)"
     

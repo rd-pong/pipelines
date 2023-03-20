@@ -5,7 +5,7 @@ import utils
 from utils import kfp_client_utils
 from utils import ack_utils
 
-
+# Testing data quality job definition component and model explainability job definition component
 @pytest.mark.parametrize(
     "test_file_dir",
     [
@@ -55,6 +55,8 @@ def test_job_definitions(kfp_client, experiment_id, test_file_dir, deploy_endpoi
 
         print("Describe job definition " + job_definition_name)
         print(job_definition_describe)
+
+        # Check if the job definition is created
 
         assert (
             job_definition_describe["status"]["conditions"][0]["type"]
@@ -144,13 +146,19 @@ def test_v2_monitoring_schedule(
 
         print(f"Describe monitoring Schedule \n {monitoring_schedule_describe}")
 
-        # Check if the monitoring schedule is created
-        assert monitoring_schedule_describe["MonitoringScheduleArn"] != None
+        # Verify if monitoring schedule is created with correct name and endpoint
+
+        assert (
+            monitoring_schedule_name
+            in monitoring_schedule_describe["MonitoringScheduleArn"]
+        )
 
         assert (
             monitoring_schedule_describe["MonitoringScheduleStatus"] == "Scheduled"
             or "Pending"
         )
+
+        assert monitoring_schedule_describe["EndpointName"] == deploy_endpoint
 
     finally:
         ack_utils._delete_resource(

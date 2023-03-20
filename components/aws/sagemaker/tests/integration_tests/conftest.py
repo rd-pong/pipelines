@@ -1,4 +1,3 @@
-import time
 import pytest
 import boto3
 import kfp
@@ -8,9 +7,7 @@ import utils
 
 from datetime import datetime
 from filelock import FileLock
-from sagemaker import get_execution_role, image_uris, Session
-from sagemaker.model import Model
-from sagemaker.model_monitor import DataCaptureConfig
+from sagemaker import image_uris
 
 
 def pytest_addoption(parser):
@@ -253,7 +250,7 @@ def deploy_endpoint(sagemaker_client, s3_data_bucket, sagemaker_role_arn, region
 
     yield endpoint_name
 
-    # todo delete model and endpoint config
+    # delete model and endpoint config
     print("deleting endpoint.................")
     sagemaker_utils.delete_endpoint(sagemaker_client, endpoint_name)
     sagemaker_client.delete_endpoint_config(EndpointConfigName=endpoint_config_name)

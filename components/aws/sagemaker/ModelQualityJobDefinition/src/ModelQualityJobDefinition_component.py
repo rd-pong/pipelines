@@ -44,8 +44,8 @@ class SageMakerModelQualityJobDefinitionComponent(SageMakerComponent):
         ############GENERATED SECTION BELOW############
 
         self.job_name = spec.inputs.job_definition_name = (
-            spec.inputs.job_definition_name  # todo: need customize
-            if spec.inputs.job_definition_name  # todo: need customize
+            spec.inputs.job_definition_name
+            if spec.inputs.job_definition_name
             else SageMakerComponent._generate_unique_timestamped_id(
                 prefix="model-quality-job-definition"
             )
